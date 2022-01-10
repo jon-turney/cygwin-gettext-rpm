@@ -73,8 +73,8 @@ Static version of the Gettext library for the Cygwin x86_64 toolchain.
 %prep
 %autosetup -p2 -n gettext-%{version}
 
-rm -f m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
-touch m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
+rm -f m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4 libtextstyle/m4/libtool.m4
+touch m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4 libtextstyle/m4/libtool.m4
 cygwin-libtoolize --copy --force
 GNULIB_TOOL=: ./autogen.sh --skip-gnulib
 
