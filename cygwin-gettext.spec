@@ -7,7 +7,7 @@ Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
 Group:     Development/Libraries
-URL:       https://www.gnu.org/software/gettext/x
+URL:       https://www.gnu.org/software/gettext/
 BuildArch: noarch
 
 Source0:   https://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
