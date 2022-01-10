@@ -1,7 +1,7 @@
 %{?cygwin_package_header}
 
 Name:      cygwin-gettext
-Version:   0.19.8.1
+Version:   0.21
 Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
@@ -12,7 +12,7 @@ BuildArch: noarch
 
 Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
 Patch0:    gettext-0.18.1.1-autopoint-V.patch
-Patch1:    gettext-0.19.3-localename.patch
+Patch1:    gettext-0.21-localename.patch
 Patch2:    gettext-0.19.8.1-no-woe32dll.patch
 Patch3:    gettext-0.19.8.1-cygwin-ftm.patch
 Patch4:    gettext-0.19.8.1-have_wprintf.patch
@@ -71,12 +71,7 @@ Static version of the Gettext library for the Cygwin x86_64 toolchain.
 
 
 %prep
-%setup -q -n gettext-%{version}
-%patch0 -p2
-%patch1 -p2
-%patch2 -p2
-%patch3 -p2
-%patch4 -p2
+%autosetup -p2 -n gettext-%{version}
 
 rm -f m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
 touch m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
@@ -139,11 +134,11 @@ GNULIB_TOOL=: ./autogen.sh --skip-gnulib
   gl_cv_have_weak=no \
   gt_cv_int_divbyzero_sigfpe=yes
 
-%cygwin_make %{?_smp_mflags}
+%cygwin_make
 
 
 %install
-%cygwin_make install DESTDIR=$RPM_BUILD_ROOT
+%cygwin_make_install
 
 # Runtime data files
 rm -f $RPM_BUILD_ROOT%{cygwin32_datadir}/locale/locale.alias
@@ -230,6 +225,9 @@ find $RPM_BUILD_ROOT -name '*.la' -delete
 
 
 %changelog
+* Mon Jan 10 2022 Yaakov Selkowitz <yselkowi@redhat.com> - 0.21-1
+- new version
+
 * Tue Dec 05 2017 Yaakov Selkowitz <yselkowi@redhat.com> - 0.19.8.1-1
 - new version
 
