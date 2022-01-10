@@ -85,6 +85,7 @@ GNULIB_TOOL=: ./autogen.sh --skip-gnulib
 # to compile errors in gettext-tools. The correct values below are based on
 # comparison with a Cygwin-native build.
 %cygwin_configure \
+  --disable-dependency-tracking \
   --disable-java \
   --disable-native-java \
   --disable-csharp \
