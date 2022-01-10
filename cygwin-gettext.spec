@@ -17,7 +17,11 @@ Patch2:    gettext-0.19.8.1-no-woe32dll.patch
 Patch3:    gettext-0.19.8.1-cygwin-ftm.patch
 Patch4:    gettext-0.19.8.1-have_wprintf.patch
 
-BuildRequires: autoconf automake cygwin-libtool-base
+BuildRequires: autoconf
+BuildRequires: automake
+BuildRequires: cygwin-libtool-base
+BuildRequires: make
+
 BuildRequires: cygwin32-filesystem >= 10
 BuildRequires: cygwin32-gcc
 BuildRequires: cygwin32-gcc-c++
