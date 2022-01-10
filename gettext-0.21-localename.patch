@@ -1,5 +1,5 @@
---- origsrc/gettext-runtime/gnulib-lib/localename.c	2020-06-26 13:31:00.000000000 -0600
-+++ src/gettext-runtime/gnulib-lib/localename.c	2021-07-26 22:46:33.473276900 -0600
+--- origsrc/gettext-0.21/gettext-runtime/gnulib-lib/localename.c	2020-06-26 13:31:00.000000000 -0600
++++ src/gettext-0.21/gettext-runtime/gnulib-lib/localename.c	2021-07-26 22:46:33.473276900 -0600
 @@ -79,7 +79,7 @@
  # endif
  #endif
