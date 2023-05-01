@@ -2,7 +2,7 @@
 
 Name:      cygwin-gettext
 Version:   0.19.8.1
-Release:   1%{?dist}
+Release:   2%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -17,6 +17,7 @@ Patch2:    gettext-0.19.8.1-no-woe32dll.patch
 Patch3:    gettext-0.19.8.1-cygwin-ftm.patch
 Patch4:    gettext-0.19.8.1-have_wprintf.patch
 
+BuildRequires: make
 BuildRequires: autoconf automake cygwin-libtool-base
 BuildRequires: cygwin32-filesystem >= 10
 BuildRequires: cygwin32-gcc
@@ -230,6 +231,9 @@ find $RPM_BUILD_ROOT -name '*.la' -delete
 
 
 %changelog
+* Mon May 01 2023 Jon Turney <jon.turney@dronecode.org.uk> - 0.19.8.1-1
+- add make to BuildRequires
+
 * Tue Dec 05 2017 Yaakov Selkowitz <yselkowi@redhat.com> - 0.19.8.1-1
 - new version
 
