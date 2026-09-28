@@ -1,8 +1,8 @@
 %{?cygwin_package_header}
 
 Name:      cygwin-gettext
-Version:   0.19.8.1
-Release:   3%{?dist}
+Version:   0.22.5
+Release:   1%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
@@ -11,11 +11,20 @@ URL:       https://www.gnu.org/software/gettext/
 BuildArch: noarch
 
 Source0:   https://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
-Patch0:    gettext-0.18.1.1-autopoint-V.patch
-Patch1:    gettext-0.19.3-localename.patch
-Patch2:    gettext-0.19.8.1-no-woe32dll.patch
-Patch3:    gettext-0.19.8.1-cygwin-ftm.patch
-Patch4:    gettext-0.19.8.1-have_wprintf.patch
+Patch0:    gettext-0.21.1-autopoint-V.patch
+Patch1:    gettext-0.21.1-cygwin-ftm.patch
+Patch2:    gettext-0.22-no-woe32dll-gettext-tools-configure-ac.patch
+Patch3:    gettext-0.22-no-woe32dll-m4-woe32-dll-m4.patch
+Patch4:    gettext-0.22.2-disable-libtextstyle.patch
+Patch5:    gettext-0.22.5-gettext-runtime-intl-gnulib-lib-localcharset-c.patch
+Patch6:    gettext-0.22.5-gettext-runtime-gnulib-lib-localcharset-c.patch
+Patch7:    gettext-0.22.5-gettext-tools-gnulib-lib-localcharset-c.patch
+Patch8:    gettext-0.22.5-gettext-runtime-intl-gnulib-lib-localename-h.patch
+Patch9:    gettext-0.22.5-gettext-runtime-gnulib-lib-localename-h.patch
+Patch10:   gettext-0.22.5-gettext-tools-gnulib-lib-localename-h.patch
+Patch11:   gettext-0.22.5-gettext-runtime-intl-gnulib-lib-localename-unsafe-c.patch
+Patch12:   gettext-0.22.5-gettext-runtime-gnulib-lib-localename-unsafe-c.patch
+Patch13:   gettext-0.22.5-gettext-tools-gnulib-lib-localename-unsafe-c.patch
 
 BuildRequires: make
 BuildRequires: autoconf automake cygwin-libtool-base
@@ -97,7 +106,8 @@ Static version of the Gettext library for the Cygwin aarch64 toolchain.
 
 %prep
 %setup -q -n gettext-%{version}
-%autopatch -p2
+%global _default_patch_fuzz 2
+%autopatch -p1
 
 rm -f m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
 touch m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
@@ -106,63 +116,25 @@ GNULIB_TOOL=: ./autogen.sh --skip-gnulib
 
 
 %build
-%global cygwin32_cflags %{cygwin32_cflags} -std=gnu17
-%global cygwin64_cflags %{cygwin64_cflags} -std=gnu17
-%global cygwin_aarch64_cflags %{cygwin_aarch64_cflags} -std=gnu17 -O0
+%global cygwin_aarch64_cflags %{cygwin_aarch64_cflags} -O0
 
-# gnulib uses many AC_TRY_RUN/AC_RUN_IFELSE tests, but assumes functions
-# are broken when cross-compiling and tries replacing them, eventually leading
-# to compile errors in gettext-tools. The correct values below are based on
-# comparison with a Cygwin-native build.
+# gnulib uses many AC_TRY_RUN/AC_RUN_IFELSE tests. With
+# --enable-cross-guesses=risky it assumes the functions are present when
+# cross-compiling. Override with some needed values taken from a comparison with
+# a Cygwin-native build which would other lead to build errors.
 %cygwin_configure \
   --disable-java \
-  --disable-native-java \
   --disable-csharp \
   --enable-static --enable-shared \
   --enable-threads=posix \
   --without-emacs \
   --with-included-glib \
-  --with-included-libcroco \
   --with-included-libunistring \
-  --with-included-libxml \
   --without-libiconv-prefix \
-  ac_cv_func_lstat_dereferences_slashed_symlink=yes \
-  am_cv_func_iconv_works=yes \
-  gl_cv_cc_visibility=no \
-  gl_cv_header_working_fcntl_h=yes \
-  gl_cv_func_btowc_eof=yes \
-  gl_cv_func_btowc_nul=yes \
-  gl_cv_func_dup2_works=yes \
-  gl_cv_func_fcntl_f_dupfd_works=yes \
-  gl_cv_func_fnmatch_posix=yes \
-  gl_cv_func_fopen_slash=yes \
-  gl_cv_func_working_getdelim=yes \
-  gl_cv_func_getopt_posix=yes \
-  gl_cv_func_gettimeofday_clobber=no \
-  gl_cv_func_mbrtowc_incomplete_state=yes \
-  gl_cv_func_mbrtowc_null_arg=yes \
-  gl_cv_func_mbrtowc_retval=yes \
-  gl_cv_func_mbsrtowcs_works=yes \
-  gl_cv_func_memchr_works=yes \
-  gl_cv_func_open_slash=yes \
-  gl_cv_func_readlink_works=yes \
-  gl_cv_func_rmdir_works=yes \
+  --enable-cross-guesses=risky \
   gt_cv_func_printf_posix=yes \
-  gl_cv_func_setenv_works=yes \
-  gl_cv_func_snprintf_retval_c99=yes \
-  gl_cv_func_snprintf_size1=yes \
-  gl_cv_func_stat_dir_slash=yes \
-  gl_cv_func_stat_file_slash=yes \
-  gl_cv_func_stpncpy=yes \
-  gl_cv_func_strstr_linear=yes \
-  gl_cv_func_svid_putenv=yes \
-  gl_cv_func_symlink_works=yes \
-  gl_cv_func_unsetenv_works=yes \
-  gl_cv_func_wcrtomb_retval=yes \
-  gl_cv_func_wctob_works=yes \
-  gl_cv_func_wcwidth_works=yes \
-  gl_cv_have_weak=no \
-  gt_cv_int_divbyzero_sigfpe=yes
+  ac_cv_func_vasnprintf=no \
+  gl_cv_func_re_compile_pattern_working=no
 
 %cygwin_make %{?_smp_mflags}
 
