@@ -2,15 +2,15 @@
 
 Name:      cygwin-gettext
 Version:   0.19.8.1
-Release:   2%{?dist}
+Release:   3%{?dist}
 Summary:   GNU libraries and utilities for producing multi-lingual messages
 
 License:   GPLv2+ and LGPLv2+
 Group:     Development/Libraries
-URL:       http://www.gnu.org/software/gettext/
+URL:       https://www.gnu.org/software/gettext/
 BuildArch: noarch
 
-Source0:   http://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
+Source0:   https://ftp.gnu.org/pub/gnu/gettext/gettext-%{version}.tar.xz
 Patch0:    gettext-0.18.1.1-autopoint-V.patch
 Patch1:    gettext-0.19.3-localename.patch
 Patch2:    gettext-0.19.8.1-no-woe32dll.patch
@@ -19,6 +19,7 @@ Patch4:    gettext-0.19.8.1-have_wprintf.patch
 
 BuildRequires: make
 BuildRequires: autoconf automake cygwin-libtool-base
+
 BuildRequires: cygwin32-filesystem >= 10
 BuildRequires: cygwin32-gcc
 BuildRequires: cygwin32-gcc-c++
@@ -33,18 +34,25 @@ BuildRequires: cygwin64-binutils
 BuildRequires: cygwin64
 BuildRequires: cygwin64-libiconv
 
+BuildRequires: cygwin-aarch64-filesystem >= 10
+BuildRequires: cygwin-aarch64-gcc
+BuildRequires: cygwin-aarch64-gcc-c++
+BuildRequires: cygwin-aarch64-binutils
+BuildRequires: cygwin-aarch64
+BuildRequires: cygwin-aarch64-libiconv
+
 %description
 Gettext libraries for Cygwin toolchains.
 
 %package -n cygwin32-gettext
-Summary:        Gettext libraries for Cygwin32 toolchain
+Summary:        Gettext libraries for Cygwin i686 toolchain
 Group:          Development/Libraries
 
 %description -n cygwin32-gettext
 Gettext library for the Cygwin i686 toolchain.
 
 %package -n cygwin32-gettext-static
-Summary:        Static version of the Cygwin32 Gettext library
+Summary:        Static version of the Cygwin i686 Gettext library
 Group:          Development/Libraries
 Requires:       cygwin32-gettext = %{version}-%{release}
 Requires:       cygwin32-libiconv-static
@@ -53,14 +61,14 @@ Requires:       cygwin32-libiconv-static
 Static version of the Gettext library for the Cygwin i686 toolchain.
 
 %package -n cygwin64-gettext
-Summary:        Gettext libraries for Cygwin64 toolchain
+Summary:        Gettext libraries for Cygwin x86_64 toolchain
 Group:          Development/Libraries
 
 %description -n cygwin64-gettext
 Gettext library for the Cygwin x86_64 toolchain.
 
 %package -n cygwin64-gettext-static
-Summary:        Static version of the Cygwin64 Gettext library
+Summary:        Static version of the Cygwin x86_64 Gettext library
 Group:          Development/Libraries
 Requires:       cygwin64-gettext = %{version}-%{release}
 Requires:       cygwin64-libiconv-static
@@ -68,16 +76,28 @@ Requires:       cygwin64-libiconv-static
 %description -n cygwin64-gettext-static
 Static version of the Gettext library for the Cygwin x86_64 toolchain.
 
+%package -n cygwin-aarch64-gettext
+Summary:        Gettext libraries for Cygwin aarch64 toolchain
+Group:          Development/Libraries
+
+%description -n cygwin-aarch64-gettext
+Gettext library for the Cygwin aarch64 toolchain.
+
+%package -n cygwin-aarch64-gettext-static
+Summary:        Static version of the Cygwin aarch64 Gettext library
+Group:          Development/Libraries
+Requires:       cygwin-aarch64-gettext = %{version}-%{release}
+Requires:       cygwin-aarch64-libiconv-static
+
+%description -n cygwin-aarch64-gettext-static
+Static version of the Gettext library for the Cygwin aarch64 toolchain.
+
 %{?cygwin_debug_package}
 
 
 %prep
 %setup -q -n gettext-%{version}
-%patch0 -p2
-%patch1 -p2
-%patch2 -p2
-%patch3 -p2
-%patch4 -p2
+%autopatch -p2
 
 rm -f m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
 touch m4/libtool.m4 gettext-tools/gnulib-m4/openmp.m4
@@ -86,6 +106,10 @@ GNULIB_TOOL=: ./autogen.sh --skip-gnulib
 
 
 %build
+%global cygwin32_cflags %{cygwin32_cflags} -std=gnu17
+%global cygwin64_cflags %{cygwin64_cflags} -std=gnu17
+%global cygwin_aarch64_cflags %{cygwin_aarch64_cflags} -std=gnu17 -O0
+
 # gnulib uses many AC_TRY_RUN/AC_RUN_IFELSE tests, but assumes functions
 # are broken when cross-compiling and tries replacing them, eventually leading
 # to compile errors in gettext-tools. The correct values below are based on
@@ -153,6 +177,9 @@ rm -f $RPM_BUILD_ROOT%{cygwin32_libdir}/charset.alias
 rm -f $RPM_BUILD_ROOT%{cygwin64_datadir}/locale/locale.alias
 rm -f $RPM_BUILD_ROOT%{cygwin64_libdir}/charset.alias
 
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_datadir}/locale/locale.alias
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_libdir}/charset.alias
+
 # This documentation is available in base gettext-devel.
 rm -rf $RPM_BUILD_ROOT%{cygwin32_docdir}
 rm -rf $RPM_BUILD_ROOT%{cygwin32_infodir}
@@ -161,6 +188,10 @@ rm -rf $RPM_BUILD_ROOT%{cygwin32_mandir}
 rm -rf $RPM_BUILD_ROOT%{cygwin64_docdir}
 rm -rf $RPM_BUILD_ROOT%{cygwin64_infodir}
 rm -rf $RPM_BUILD_ROOT%{cygwin64_mandir}
+
+rm -rf $RPM_BUILD_ROOT%{cygwin_aarch64_docdir}
+rm -rf $RPM_BUILD_ROOT%{cygwin_aarch64_infodir}
+rm -rf $RPM_BUILD_ROOT%{cygwin_aarch64_mandir}
 
 # Remove unnecessary Cygwin native binaries and their dependencies
 rm -f $RPM_BUILD_ROOT%{cygwin32_bindir}/*.exe
@@ -180,6 +211,15 @@ rm -f $RPM_BUILD_ROOT%{cygwin64_libdir}/libgettextlib.*
 rm -f $RPM_BUILD_ROOT%{cygwin64_libdir}/libgettextsrc.*
 rm -fr $RPM_BUILD_ROOT%{cygwin64_libdir}/gettext/
 rm -fr $RPM_BUILD_ROOT%{cygwin64_datadir}/gettext-*/
+
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_bindir}/*.exe
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_bindir}/gettext.sh
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_bindir}/cyggettextlib-*.dll
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_bindir}/cyggettextsrc-*.dll
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_libdir}/libgettextlib.*
+rm -f $RPM_BUILD_ROOT%{cygwin_aarch64_libdir}/libgettextsrc.*
+rm -fr $RPM_BUILD_ROOT%{cygwin_aarch64_libdir}/gettext/
+rm -fr $RPM_BUILD_ROOT%{cygwin_aarch64_datadir}/gettext-*/
 
 # We intentionally don't ship *.la files
 find $RPM_BUILD_ROOT -name '*.la' -delete
@@ -229,9 +269,33 @@ find $RPM_BUILD_ROOT -name '*.la' -delete
 %{cygwin64_libdir}/libgettextpo.a
 %{cygwin64_libdir}/libintl.a
 
+%files -n cygwin-aarch64-gettext -f cygwin_aarch64-gettext.lang
+%doc COPYING
+%{cygwin_aarch64_bindir}/autopoint
+%{cygwin_aarch64_bindir}/gettextize
+%{cygwin_aarch64_bindir}/cygasprintf-0.dll
+%{cygwin_aarch64_bindir}/cyggettextpo-0.dll
+%{cygwin_aarch64_bindir}/cygintl-8.dll
+%{cygwin_aarch64_includedir}/autosprintf.h
+%{cygwin_aarch64_includedir}/gettext-po.h
+%{cygwin_aarch64_includedir}/libintl.h
+%{cygwin_aarch64_libdir}/libasprintf.dll.a
+%{cygwin_aarch64_libdir}/libgettextpo.dll.a
+%{cygwin_aarch64_libdir}/libintl.dll.a
+%{cygwin_aarch64_datadir}/aclocal/*m4
+%{cygwin_aarch64_datadir}/gettext/
+
+%files -n cygwin-aarch64-gettext-static
+%{cygwin_aarch64_libdir}/libasprintf.a
+%{cygwin_aarch64_libdir}/libgettextpo.a
+%{cygwin_aarch64_libdir}/libintl.a
+
 
 %changelog
-* Mon May 01 2023 Jon Turney <jon.turney@dronecode.org.uk> - 0.19.8.1-1
+* Mon Sep 28 2026 Jon Turney <jon.turney@dronecode.org.uk> - 0.19.8.1-3
+- add aarch64
+
+* Mon May 01 2023 Jon Turney <jon.turney@dronecode.org.uk> - 0.19.8.1-2
 - add make to BuildRequires
 
 * Tue Dec 05 2017 Yaakov Selkowitz <yselkowi@redhat.com> - 0.19.8.1-1
